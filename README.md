@@ -18,23 +18,23 @@ Each network namespace also has its own set of iptables (for both IPv4 and IPv6)
 ```
 $ sudo ip netns list  
  ```
-You should see your network namespace netns1 listed there, ready for you to use.
+We should see your network namespace netns1 listed there, ready for you to use.
 
 **Assigning Interfaces to Network Namespaces:**
 ```
   $ sudo ip link add veth1 type veth peer name ceth1
 ```
-You can verify that the veth pair was created using this command:
+We can verify that the veth pair was created using this command:
 ```
 $ sudo ip link list
 ```
-You should see a pair of veth interfaces (using the names you assigned in the command above) listed there. Right now, they both belong to the “default” or “global” namespace, along with the physical interfaces.
+We should see a pair of veth interfaces (using the names you assigned in the command above) listed there. Right now, they both belong to the “default” or “global” namespace, along with the physical interfaces.
 
-Let’s say that you want to connect the global namespace to the netns1 namespace. To do that, you’ll need to move one of the veth interfaces to the netns1 namespace using this command:
+Let’s say that We want to connect the global namespace to the netns1 namespace. To do that, you’ll need to move one of the veth interfaces to the netns1 namespace using this command:
 ```
   $ sudo ip link set ceth1 netns netns1
 ```
-If you then run the ip link list command again, you’ll see that the ceth1 interface has disappeared from the list. It’s now in the netns1 namespace, so to see it you’d need to run this command:
+If we then run the ip link list command again, we will see that the ceth1 interface has disappeared from the list. It’s now in the netns1 namespace, so to see it you’d need to run this command:
 ```
 $ sudo ip netns exec netns1 ip link list
 ```
