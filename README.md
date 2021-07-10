@@ -139,6 +139,6 @@ Now (finally), we’re good! We have connectivity all the way:
 * an application inside a namespace can access the internet.
 
 
-Reference:
+Reference:  
   https://ops.tips/blog/using-network-namespaces-and-bridge-to-isolate-servers/  
   https://unix.stackexchange.com/questions/524052/how-to-connect-a-namespace-to-a-physical-interface-through-a-bridge-and-veth-pai
