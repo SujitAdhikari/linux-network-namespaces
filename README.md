@@ -126,11 +126,11 @@ $ sudo iptables -t nat -A POSTROUTING -s 172.20.0.0/16 -j MASQUERADE
 ```
 $ sysctl -w net.ipv4.ip_forward=1
 ```
-sujit@srv:~$ sudo ip netns exec netns2 ping 8.8.8.8
-PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
-64 bytes from 8.8.8.8: icmp_seq=1 ttl=127 time=30.3 ms
-64 bytes from 8.8.8.8: icmp_seq=2 ttl=127 time=27.9 ms
-Now (finally), we’re good! We have connectivity all the way:
+sujit@srv:~$ sudo ip netns exec netns2 ping 8.8.8.8  
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.  
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=127 time=30.3 ms  
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=127 time=27.9 ms  
+Now (finally), we’re good! We have connectivity all the way:  
 
 * the host can direct traffic to an application inside a namespace;
 * an application inside a namespace can direct traffic to an application in the host;
