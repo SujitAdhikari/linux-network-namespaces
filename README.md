@@ -1,7 +1,7 @@
 Linux Network Namespaces:
 --------------------------
 **Namespaces**
-Namespaces are a feature of the Linux kernel that partitions kernel resources such that one set of processes sees one set of resources while another set of processes sees a different set of resources. The feature works by having the same namespace for a set of resources and processes, but those namespaces refer to distinct resources. Resources may exist in multiple spaces. Examples of such resources are process IDs, hostnames, user IDs, file names, and some names associated with network access, and interprocess communication.
+Namespaces are a feature of the Linux kernel that partitions kernel resources such that one set of processes sees one set of resources while another set of processes sees a different set of resources. The feature works by having the same namespace for a set of resources and processes, but those namespaces refer to distinct resources. Resources may exist in multiple spaces. Examples of such resources are process IDs, hostnames, user IDs, file names, and some names associated with network access, and interprocess communication.  
 **Linux Network Namespaces:**
 In a network namespace, the scoped ‘identifiers’ are network devices; so a given network device, such as eth0, exists in a particular namespace. Linux starts up with a default network namespace, so if your operating system does not do anything special, that is where all the network devices will be located. But it is also possible to create further non-default namespaces, and create new devices in those namespaces, or to move an existing device from one namespace to another.
 
@@ -48,21 +48,21 @@ Now we are in the netns1 namespace with sh shell. Check interface in the netns1
 Now we are able to see ceth1 in the list along with loopback interface(lo). Both link state is down.
 **Configuring Interface IP in Network Namespaces**
 ```
-$ sudo ip netns exec netns1 ip addr add 172.20.0.1/16 dev ceth1
+$ sudo ip netns exec netns1 ip addr add 172.20.0.11/16 dev ceth1
 $ sudo ip netns exec netns1 ip link set dev ceth1 up
 $ sudo  ip netns exec netns1 ip link set lo up
 ```
 or
 ```
 $ sudo ip netns exec netns1 sh
-$ ip addr add 172.20.0.2/16 dev ceth1
+$ ip addr add 172.20.0.11/16 dev ceth1
 $ ip link set dev ceth1 up
 $ ip link set lo up
 $ exit
 ```
 **Configuring IP Address on veth1 in  “default” or “global” Namespaces**
 ```
-  $ ip addr add 172.20.0.1/16 deb veth1
+  $ ip addr add 172.20.0.1/16 dev veth1
   $ ip link set dev veth1 up
 ```
 Now we will go to netns1 namespace with sh shell.
@@ -70,7 +70,30 @@ Now we will go to netns1 namespace with sh shell.
 $ sudo ip netns exec netns1 sh
 $ ip route
 $ route -n
+$ ping 172.20.0.11
 $ ping 172.20.0.1
-$ ping 172.20.0.2
 $ arp -a
 ```
+We will do the same for another network namespace.
+```
+$ sudo ip netns add netns2
+$ sudo ip link add veth2 type veth peer name ceth2 netns netns2
+$ sudo ip netns exec netns2 ip addr add 172.20.0.12/16 dev ceth2
+$ sudo ip netns exec netns2 ip link set dev ceth2 up
+$ sudo ip netns exec netns2 ip link set lo up
+$ sudo ip addr add 172.20.0.2/16 dev veth2
+$ sudo ip link set dev veth2 up
+$ ping 172.20.0.12 -I veth2
+```
+
+Bridge:
+sudo ip link add br0 type bridge
+sudo ip link set br0 up
+sudo ip link set veth1 master br0
+sudo ip link set veth2 master br0
+
+bridge link show br1
+ip addr add 172.20.0.10/16 brd + dev br0
+
+ip netns exec namespace1 ip route add default via 192.168.1.10
+
