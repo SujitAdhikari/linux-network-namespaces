@@ -86,14 +86,45 @@ $ sudo ip link set dev veth2 up
 $ ping 172.20.0.12 -I veth2
 ```
 
-Bridge:
-sudo ip link add br0 type bridge
-sudo ip link set br0 up
-sudo ip link set veth1 master br0
-sudo ip link set veth2 master br0
+  **Create a bridge device naming it `br0` and set it up.**
+```
+$ sudo ip link add br0 type bridge
+$ sudo ip link set br0 up
+```
+  **Add the veth1 & veth2 interface to the bridge by setting the bridge device as their master.**  
+```
+$ sudo ip link set veth1 master br0
+$ sudo ip link set veth2 master br0
+```
+  **Set the address of the `br0` interface (bridge device)**  
+```
+$ bridge link show br0
+$ sudo ip addr add 172.20.0.10/16 brd + dev br0
+```
+  **add the default gateway in all the network namespace.**  
+```
+$ sudo ip netns exec netns1 ip route add default via 172.20.0.10
+$ sudo ip netns exec netns2 ip route add default via 172.20.0.10
+```
+* Set us up to have responses from the network.
+* -t specifies the table to which the commands should be directed to. By default, it's `filter`.
+* -A specifies that we're appending a rule to the chain that we tell the name after it.
+* -s specifies a source address (with a mask in this case).
+* -j specifies the target to jump to (what action to take).
+```
+$ sudo iptables -t nat -A POSTROUTING -s 172.20.0.0/16 -j MASQUERADE
+```
+**Enable packet forwarding**
+```
+$ sysctl -w net.ipv4.ip_forward=1
+```
+ubuntu@srv:~$ sudo ip netns exec netns2 ping 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=127 time=30.3 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=127 time=27.9 ms
+Now (finally), we’re good! We have connectivity all the way:
 
-bridge link show br1
-ip addr add 172.20.0.10/16 brd + dev br0
-
-ip netns exec namespace1 ip route add default via 192.168.1.10
-
+* the host can direct traffic to an application inside a namespace;
+* an application inside a namespace can direct traffic to an application in the host;
+* an application inside a namespace can direct traffic to another application in another namespace; and
+* an application inside a namespace can access the internet.
