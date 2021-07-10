@@ -86,7 +86,15 @@ $ sudo ip link set dev veth2 up
 $ ping 172.20.0.12 -I veth2
 ```
 
-  **Create a bridge device naming it `br0` and set it up.**
+  **Create a bridge device naming it `br0` and set it up.**  
+  We do not need IP address for veth1 & veth2 because we are going to create bridge interface br0 and we will Add veth1 & veth2 interface to the bridge by setting the bridge device as their master.  
+  * Remove IP address for veth1 & veth2
+```
+ $ sudo ip addr del 172.20.0.1/16  dev veth1
+ $ sudo ip addr del 172.20.0.2/16  dev veth2
+
+```
+Create a bridge device:
 ```
 $ sudo ip link add br0 type bridge
 $ sudo ip link set br0 up
@@ -118,7 +126,7 @@ $ sudo iptables -t nat -A POSTROUTING -s 172.20.0.0/16 -j MASQUERADE
 ```
 $ sysctl -w net.ipv4.ip_forward=1
 ```
-ubuntu@srv:~$ sudo ip netns exec netns2 ping 8.8.8.8
+sujit@srv:~$ sudo ip netns exec netns2 ping 8.8.8.8
 PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
 64 bytes from 8.8.8.8: icmp_seq=1 ttl=127 time=30.3 ms
 64 bytes from 8.8.8.8: icmp_seq=2 ttl=127 time=27.9 ms
