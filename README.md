@@ -36,7 +36,7 @@ Let’s say that you want to connect the global namespace to the netns1 namespac
 ```
 If you then run the ip link list command again, you’ll see that the ceth1 interface has disappeared from the list. It’s now in the netns1 namespace, so to see it you’d need to run this command:
 ```
-ip netns exec netns1 ip link list
+$ sudo ip netns exec netns1 ip link list
 ```
 or
 ```
@@ -56,15 +56,15 @@ $ sudo  ip netns exec netns1 ip link set lo up
 or
 ```
 $ sudo ip netns exec netns1 sh
-$ ip addr add 172.20.0.11/16 dev ceth1
-$ ip link set dev ceth1 up
-$ ip link set lo up
+$ sudo ip addr add 172.20.0.11/16 dev ceth1
+$ sudo ip link set dev ceth1 up
+$ sudo ip link set lo up
 $ exit
 ```
 **Configuring IP Address on veth1 in  “default” or “global” Namespaces**
 ```
-  $ ip addr add 172.20.0.1/16 dev veth1
-  $ ip link set dev veth1 up
+  $ sudo ip addr add 172.20.0.1/16 dev veth1
+  $ sudo ip link set dev veth1 up
 ```
 Now we will go to netns1 namespace with sh shell.
 ```
@@ -125,7 +125,7 @@ $ sudo iptables -t nat -A POSTROUTING -s 172.20.0.0/16 -j MASQUERADE
 ```
 **Enable packet forwarding**
 ```
-$ sysctl -w net.ipv4.ip_forward=1
+$ sudo sysctl -w net.ipv4.ip_forward=1
 ```
 sujit@srv:~$ sudo ip netns exec netns2 ping 8.8.8.8  
 PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.  
